@@ -1,0 +1,10 @@
+out
+/UnitTest/target/
+/target/
+account-dao/target/
+author-book/target/
+company-products/target/
+employee-profile/target/
+hello-jpa-entity/target/
+hello-persistence-xml/target/
+photo-comment-dao/target/
