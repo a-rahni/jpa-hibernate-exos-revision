@@ -1,0 +1,6 @@
+DROP DATABASE IF EXISTS `exercise_db`;
+DROP USER IF EXISTS 'exercise_user'@'localhost';
+CREATE DATABASE `exercise_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER 'exercise_user'@'localhost' IDENTIFIED BY 'exercise_pwd';
+GRANT ALL ON `exercise_db` . * TO 'exercise_user'@'localhost' IDENTIFIED BY 'exercise_pwd';
+USE `exercise_db`
