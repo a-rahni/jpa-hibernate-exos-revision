@@ -21,11 +21,27 @@ import java.time.LocalDateTime;
  * - Mapper la relation entre Photo et PhotoComment en définissant le nom de la colonne de la foreign_key en: "photo_id"
  * - Configurer la relation pour qu'elle soit obligatoire (not optional)
  */
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")  // necessaire pour les add and remove
 @Getter
 @Setter
+@Entity
+@Table(name="photo_comment")
 public class PhotoComment {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+    
+    @Column(nullable = false)
     private String text;
     private LocalDateTime createdOn;
+    
+    @JoinColumn(name="photo_id", nullable=false)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     private Photo photo;
+    
+    public void setPhoto(Photo photo){
+        this.photo = photo;
+        photo.addComment(this); //stack overflow si pas de control dans le addComment
+    }
 }

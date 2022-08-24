@@ -25,20 +25,41 @@ import java.util.List;
  * - Mettre en place la suppresion des orphelin (orphanRemoval = true)
  */
 
+@NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
+@Entity
+@Table(name="photo")
 public class Photo {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+    @Column(name="url", nullable=false, unique=true)
     private String url;
     private String description;
-    private List<PhotoComment> comments;
+    
+    @OneToMany(mappedBy="photo",
+               cascade={CascadeType.ALL},
+               orphanRemoval=true)
+    private List<PhotoComment> comments = new ArrayList<>();
 
     public void addComment(PhotoComment comment) {
-        throw new UnsupportedOperationException("Make me work!");
+        if(comment==null){
+            return;
+        }
+        comments.add(comment);
+        if(comment.getPhoto() != this){ // pour eviter de reboucler ((stack overflow))
+            comment.setPhoto(this);
+        }
+        //throw new UnsupportedOperationException("Make me work!");
     }
 
     public void removeComment(PhotoComment comment) {
-        throw new UnsupportedOperationException("Make me work!");
+        //comment.setPhoto(null);
+        comments.remove(comment);
+        //comment.setPhoto(null);  // pose probleme nullpoint lors des remove
+        //throw new UnsupportedOperationException("Make me work!");
     }
 
 }
