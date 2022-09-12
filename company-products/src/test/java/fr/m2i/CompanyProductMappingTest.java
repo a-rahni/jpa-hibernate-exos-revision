@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -222,5 +223,10 @@ class CompanyProductMappingTest {
         Company foundCompany = companyDao.findByIdFetchProducts(company.getId());
         assertThat(foundCompany, equalTo(company));
         assertThat(foundCompany.getProducts(), hasItem(product));
+    }
+
+    @Test
+    void testCompanySetProductsIsPrivate() throws NoSuchMethodException {
+        assertThat(Company.class.getDeclaredMethod("setProducts", List.class).getModifiers(), equalTo(Modifier.PRIVATE));
     }
 }

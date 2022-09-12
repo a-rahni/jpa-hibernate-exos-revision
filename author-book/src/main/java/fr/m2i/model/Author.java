@@ -1,5 +1,6 @@
 package fr.m2i.model;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,43 +10,52 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * todo:
- * - Implémenter un constructeur sans arguments
- * - Implémenter les getter et les setter
- * - Implementer equals() qui vérifie si l'instance est valide et vérifie uniquement le champs id
- * - Implementer hashCode() qui retourne la valeur 31 (hard codé)
- * - Initialiser le champs {@link Author#books} avec une nouvel instance de {@link HashSet}
- * - Implémenter la méthode utilitaire {@link Author#addBook(Book)} qui établie la relation des deux cotés
- * - Implémenter la méthode utilitaire {@link Author#removeBook(Book)} qui supprime la relation des deux cotés
- * 
- * - Configurer l'entité JPA
- * - Specifier le nom de la table: "author"
- * - Configurer un id auto généré
- * - Configurer la colonne "first_name" pour la rendre obligatoire {@link Author#firstName}
- * - Configurer la colonne "last_name" pour la rendre obligatoire {@link Author#lastName}
- * 
- * - Configurer la relation many-to-many entre {@link Author} et {@link Book}
- * - Configurer les cascades pour cette relation avec {@link CascadeType#PERSIST} and {@link CascadeType#MERGE}
- * - Configurer la table de jointure (JoinTable) avec le nom "author_book"
- * - Configurer la clé étrangère (foreign key)"book_id" qui réference la table book
- * - Configurer la clé étrangère (foreign key)"author_id" qui référence la table author
- */
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
+@Table(name = "author")
 public class Author {
+    @Id
+    @GeneratedValue
     private Long id;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false)
     private String lastName;
-    private Set<Book> books;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "author_book",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private Set<Book> books = new HashSet<>();
 
     public void addBook(Book book) {
-        throw new UnsupportedOperationException("Are you kidding me?");
+        books.add(book);
+        book.getAuthors().add(this);
     }
 
     public void removeBook(Book book) {
-        throw new UnsupportedOperationException("Are you kidding me?");
+        books.remove(book);
+        book.getAuthors().remove(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Author)) return false;
+
+        Author author = (Author) o;
+
+        return Objects.equals(id, author.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
     }
 }
 

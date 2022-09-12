@@ -5,48 +5,48 @@ import fr.m2i.model.Account;
 import java.util.List;
 
 /**
- * {@link AccountDao} fournit des méthode d'accès aux données de l'entité {@link Account}.
+ * {@link AccountDao} provides an API to access {@link Account} data.
  */
 public interface AccountDao {
     /**
-     * Reçoit une instance de {@link Account} et la stocke en BDD. Cette méthode va set un id auto généré.
+     * Receives a new instance of {@link Account} and stores it into database. Sets a generated id to account.
      *
-     * @param account nouvelle instance de l'entité account
+     * @param account new instance of account
      */
     void save(Account account);
 
     /**
-     * Retourne une instance de l'entité {@link Account} en recherchant par son id
+     * Returns an {@link Account} instance by its id
      *
-     * @param id l'id de {@link Account} en BDD
-     * @return account instance de {@link Account}
+     * @param id account id in the database
+     * @return account instance
      */
     Account findById(Long id);
 
     /**
-     * Retourne une instance de {@link Account} en recherchant par son email
+     * Returns {@link Account} instance by its email
      *
-     * @param email l'email de {@link Account} à rechercher
-     * @return account Instance de {@link Account}
+     * @param email account emails
+     * @return account instance
      */
     Account findByEmail(String email);
 
     /**
-     * Retourne tout les {@link Account} stockés dans la BDD
+     * Returns all accounts stored in the database.
      *
      * @return account list
      */
     List<Account> findAll();
 
     /**
-     * Reçoit une instance {@link Account} déjà stockée en BDD et la met à jour
+     * Receives stored {@link Account} instance and updates it in the database
      *
-     * @param account Instance de {@link Account} avec les champs mis à jour
+     * @param account stored account with updated fields
      */
     void update(Account account);
 
     /**
-     * Supprime l'instance de {@link Account} stockée en BDD mais la garde en mémoire.
+     * Removes the stored account from the database.
      *
      * @param account stored account instance
      */

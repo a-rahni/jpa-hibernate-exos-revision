@@ -1,13 +1,14 @@
 package fr.m2i.dao;
 
+import fr.m2i.exception.CompanyDaoException;
 import fr.m2i.model.Company;
+import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import java.util.function.Function;
 
 public class CompanyDaoImpl implements CompanyDao {
-
     private EntityManagerFactory entityManagerFactory;
 
     public CompanyDaoImpl(EntityManagerFactory entityManagerFactory) {
@@ -16,6 +17,28 @@ public class CompanyDaoImpl implements CompanyDao {
 
     @Override
     public Company findByIdFetchProducts(Long id) {
-        throw new UnsupportedOperationException("I'm still not implemented!");
+        return readWithinTx(entityManager ->
+                entityManager
+                        .createQuery("select c from Company c join fetch c.products where c.id = :id", Company.class)
+                        .setParameter("id", id)
+                        .getSingleResult()
+        );
+    }
+
+    private <T> T readWithinTx(Function<EntityManager, T> entityManagerFunction) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.unwrap(Session.class).setDefaultReadOnly(true);
+        entityManager.getTransaction().begin();
+        try {
+            T queryResult = entityManagerFunction.apply(entityManager);
+            entityManager.getTransaction().commit();
+            return queryResult;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw new CompanyDaoException("Error performing read operation", e);
+        } finally {
+            entityManager.close();
+        }
     }
 }
+
