@@ -268,5 +268,4 @@ class AuthorBookMappingTest {
 
         assertThat(joinTable.inverseJoinColumns()[0].name(), equalTo("book_id"));
     }
-  
 }
